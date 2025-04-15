@@ -1,0 +1,52 @@
+services:
+  backend:
+    build: ./backend
+    image: revisionassistant-backend
+    ports:
+      - "5001:5001"
+      - "5679:5679"  # For debugging
+    volumes:
+      - ./backend:/backend
+    environment:
+      - SECRET_KEY=234b04d7096c179286656d3f9528ed2234628e3455a8ce1f669e0e591a0d18a3
+      - OPENAI_API_KEY=sk-tC7zF1ad-KIX09x7cecqx-eGOdd_8tnSijlYMkTt2eT3BlbkFJREkc1Xe2Q2VyLCKutDZmLOpB9kbvsak1XcWULjXTMA
+      - FLASK_APP=app.py  
+      - FLASK_ENV=development
+      - MONGODB_URI=mongodb+srv://omar:3xSOmCtFKGobG3ht@cluster0.5mikz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+    networks:
+      - custom-network
+      
+    # use this to debug the backend
+    # entrypoint: [ "python", "-m", "debugpy", "--listen", "0.0.0.0:5679", "-m", "app",  "--wait-for-client", "--multiprocess", "-m", "flask", "run", "-h", "0.0.0.0", "-p", "5001" ]
+
+  frontend:
+    image: revisionassistant-frontend
+    build: ./webapp
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:5001
+    volumes:
+      - ./webapp:/webapp
+      - /webapp/node_modules  # This avoids overwriting node_modules
+    command: npm start
+    depends_on:
+      - backend
+    networks:
+      - custom-network
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - custom-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  custom-network:
+    driver: bridge  # Use the bridge network driver for container isolation
