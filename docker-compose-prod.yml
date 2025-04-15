@@ -5,8 +5,8 @@ services:
     expose:
       - "5001"
     environment:
-      - SECRET_KEY=234b04d7096c179286656d3f9528ed2234628e3455a8ce1f669e0e591a0d18a3
-      - OPENAI_API_KEY=sk-tC7zF1ad-KIX09x7cecqx-eGOdd_8tnSijlYMkTt2eT3BlbkFJREkc1Xe2Q2VyLCKutDZmLOpB9kbvsak1XcWULjXTMA
+      - SECRET_KEY=x
+      - OPENAI_API_KEY=x
       - FLASK_APP=app.py
       - FLASK_ENV=production
     command: gunicorn -w 1 -b 0.0.0.0:5001 app:app
